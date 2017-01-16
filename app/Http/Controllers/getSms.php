@@ -28,5 +28,9 @@ class getSms extends Controller
         return "saved";
 
     }
+    public function showSms(){
+        $res=texts::all();
+        return json_encode($res);
+    }
     //
 }
