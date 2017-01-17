@@ -6,7 +6,7 @@ use Request;
 use App\texts;
 class getSms extends Controller
 {
-    public function getSms(){
+    public function index(){
         $phone=Request::get('phone');
         $message=Request::get('message');
         $message_id=Request::get('message_id');
