@@ -16,5 +16,5 @@ use Illuminate\Http\Request;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
-Route::Resource('getsms','getSms@index');
+Route::get('getsms','getSms@index');
 Route::get('showSms','getSms@showSms');

@@ -14,7 +14,123 @@ class getSms extends Controller
 
         if($_SERVER['REQUEST_METHOD'] === 'POST')
         {
-          return "sawa";
+            if(isset($_GET['task']) AND $_GET['task'] === 'result'){
+                return $this->get_sms_delivery_report();
+            }
+            else if( isset($_GET['task']) && $_GET['task'] === 'sent')
+            {
+                return $this->get_sent_message_uuids();
+            }
+            else
+            {
+                return $this->get_message();
+            }
+        }
+        else
+        {
+            return $this->send_task()->send_messages_uuids_for_sms_delivery_report();
+
+        }
+    }
+    function get_message()
+    {
+        $error = NULL;
+        // Set success to false as the default success status
+        $success = false;
+        /**
+         *  Get the phone number that sent the SMS.
+         */
+        if (isset($_POST['from']))
+        {
+            $from = $_POST['from'];
+        }
+        else
+        {
+            $error = 'The from variable was not set';
+        }
+        /**
+         * Get the SMS aka the message sent.
+         */
+        if (isset($_POST['message']))
+        {
+            $message = $_POST['message'];
+        }
+        else
+        {
+            $error = 'The message variable was not set';
+        }
+        /**
+         * Get the secret key set on SMSsync side
+         * for matching on the server side.
+         */
+        if (isset($_POST['secret']))
+        {
+            $secret = $_POST['secret'];
+        }
+        /**
+         * Get the timestamp of the SMS
+         */
+        if(isset($_POST['sent_timestamp']))
+        {
+            $sent_timestamp = $_POST['sent_timestamp'];
+        }
+        /**
+         * Get the phone number of the device SMSsync is
+         * installed on.
+         */
+        if (isset($_POST['sent_to']))
+        {
+            $sent_to = $_POST['sent_to'];
+        }
+        /**
+         * Get the unique message id
+         */
+        if (isset($_POST['message_id']))
+        {
+            $message_id = $_POST['message_id'];
+        }
+        /**
+         * Get device ID
+         */
+        if (isset($_POST['device_id']))
+        {
+            $device_id = $_POST['device_id'];
+        }
+        /**
+         * Now we have retrieved the data sent over by SMSsync
+         * via HTTP. Next thing to do is to do something with
+         * the data. Either echo it or write it to a file or even
+         * store it in a database. This is entirely up to you.
+         * After, return a JSON string back to SMSsync to know
+         * if the web service received the message successfully or not.
+         *
+         * In this demo, we are just going to save the data
+         * received into a text file.
+         *
+         */
+        if ((strlen($from) > 0) AND (strlen($message) > 0) AND
+            (strlen($sent_timestamp) > 0 )
+            AND (strlen($message_id) > 0))
+        {
+            /* The screte key set here is 123456. Make sure you enter
+             * that on SMSsync.
+             */
+            if ( ( $secret == '123456'))
+            {
+                $success = true;
+            } else
+            {
+                $error = "The secret value sent from the device does not match the one on the server";
+            }
+            // now let's write the info sent by SMSsync
+            //to a file called test.txt
+            $string = "From: ".$from."\n";
+            $string .= "Message: ".$message."\n";
+            $string .= "Timestamp: ".$sent_timestamp."\n";
+            $string .= "Messages Id:" .$message_id."\n";
+            $string .= "Sent to: ".$sent_to."\n";
+            $string .= "Device ID: ".$device_id."\n\n\n";
+            write_message_to_file($string);
         }
         /**
          * Comment the code below out if you want to send an instant
