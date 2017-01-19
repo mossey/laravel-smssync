@@ -18,4 +18,3 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:api');
 Route::Resource('getsms','getSms@index');
 Route::get('showSms','getSms@showSms');
-//
