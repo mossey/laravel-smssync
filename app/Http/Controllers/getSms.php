@@ -15,21 +15,21 @@ class getSms extends Controller
         if($_SERVER['REQUEST_METHOD'] === 'POST')
         {
             if(isset($_GET['task']) AND $_GET['task'] === 'result'){
-                get_sms_delivery_report();
+                return $this->get_sms_delivery_report();
             }
             else if( isset($_GET['task']) && $_GET['task'] === 'sent')
             {
-                get_sent_message_uuids();
+                return $this->get_sent_message_uuids();
             }
             else
             {
-                get_message();
+                return $this->get_message();
             }
         }
         else
         {
-            send_task();
-            send_messages_uuids_for_sms_delivery_report();
+            return $this->send_task()->send_messages_uuids_for_sms_delivery_report();
+
         }
     }
     function get_message()
