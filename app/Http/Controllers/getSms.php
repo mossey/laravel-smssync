@@ -32,6 +32,7 @@ class getSms extends Controller
             return $this->send_task()->send_messages_uuids_for_sms_delivery_report();
         }
     }
+
     function get_message($request)
     {
         $error = NULL;
@@ -40,10 +41,9 @@ class getSms extends Controller
         /**
          *  Get the phone number that sent the SMS.
          */
-
-        if (isset($this->from))
+        if (isset($request->from))
         {
-            $from = $this->from;
+            $from = $request->from;
         }
         else
         {
@@ -52,9 +52,9 @@ class getSms extends Controller
         /**
          * Get the SMS aka the message sent.
          */
-        if (isset($this->message))
+        if (isset($request->message))
         {
-            $message = $this->message;
+            $message = $request->message;
         }
         else
         {
@@ -64,38 +64,38 @@ class getSms extends Controller
          * Get the secret key set on SMSsync side
          * for matching on the server side.
          */
-        if (isset($this->secret))
+        if (isset($request->secret))
         {
-            $secret = $this->from;
+            $secret = $request->from;
         }
         /**
          * Get the timestamp of the SMS
          */
-        if(isset($this->sent_timestamp))
+        if(isset($request->sent_timestamp))
         {
-            $sent_timestamp = $this->sent_timestamp;
+            $sent_timestamp = $request->sent_timestamp;
         }
         /**
          * Get the phone number of the device SMSsync is
          * installed on.
          */
-        if (isset($this->sent_to))
+        if (isset($request->sent_to))
         {
-            $sent_to = $this->sent_to;
+            $sent_to = $request->sent_to;
         }
         /**
          * Get the unique message id
          */
-        if (isset($this->message_id))
+        if (isset($request->message_id))
         {
-            $message_id = $this->message_id;
+            $message_id = $request->message_id;
         }
         /**
          * Get device ID
          */
-        if (isset($this->device_id))
+        if (isset($request->device_id))
         {
-            $device_id = $this->device_id;
+            $device_id = $request->device_id;
         }
         /**
          * Now we have retrieved the data sent over by SMSsync
