@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Request;
-use App\texts;
+use Illuminate\Http\Request;
+
 class getSms extends Controller
 {
+    //
+
     /**
      * Gets the messages(SMSs) sent by SMSsync as a POST request.
      *
      */
-    public function index(){
-
+    public function index(Request $request){
         if($_SERVER['REQUEST_METHOD'] === 'POST')
         {
             if(isset($_GET['task']) AND $_GET['task'] === 'result'){
@@ -23,16 +24,15 @@ class getSms extends Controller
             }
             else
             {
-                return $this->get_message();
+                return $this->get_message($request);
             }
         }
         else
         {
             return $this->send_task()->send_messages_uuids_for_sms_delivery_report();
-
         }
     }
-    function get_message()
+    function get_message($request)
     {
         $error = NULL;
         // Set success to false as the default success status
@@ -40,9 +40,9 @@ class getSms extends Controller
         /**
          *  Get the phone number that sent the SMS.
          */
-        if (isset($_POST['from']))
+        if (isset($request->from))
         {
-            $from = $_POST['from'];
+            $from = $request->from;
         }
         else
         {
@@ -51,9 +51,9 @@ class getSms extends Controller
         /**
          * Get the SMS aka the message sent.
          */
-        if (isset($_POST['message']))
+        if (isset($request->message))
         {
-            $message = $_POST['message'];
+            $message = $request->message;
         }
         else
         {
@@ -63,38 +63,38 @@ class getSms extends Controller
          * Get the secret key set on SMSsync side
          * for matching on the server side.
          */
-        if (isset($_POST['secret']))
+        if (isset($request->secret))
         {
-            $secret = $_POST['secret'];
+            $secret = $request->from;
         }
         /**
          * Get the timestamp of the SMS
          */
-        if(isset($_POST['sent_timestamp']))
+        if(isset($request->sent_timestamp))
         {
-            $sent_timestamp = $_POST['sent_timestamp'];
+            $sent_timestamp = $request->sent_timestamp;
         }
         /**
          * Get the phone number of the device SMSsync is
          * installed on.
          */
-        if (isset($_POST['sent_to']))
+        if (isset($request->sent_to))
         {
-            $sent_to = $_POST['sent_to'];
+            $sent_to = $request->sent_to;
         }
         /**
          * Get the unique message id
          */
-        if (isset($_POST['message_id']))
+        if (isset($request->message_id))
         {
-            $message_id = $_POST['message_id'];
+            $message_id = $request->message_id;
         }
         /**
          * Get device ID
          */
-        if (isset($_POST['device_id']))
+        if (isset($request->device_id))
         {
-            $device_id = $_POST['device_id'];
+            $device_id = $request->device_id;
         }
         /**
          * Now we have retrieved the data sent over by SMSsync
@@ -130,7 +130,7 @@ class getSms extends Controller
             $string .= "Messages Id:" .$message_id."\n";
             $string .= "Sent to: ".$sent_to."\n";
             $string .= "Device ID: ".$device_id."\n\n\n";
-            write_message_to_file($string);
+            self::write_message_to_file($string);
         }
         /**
          * Comment the code below out if you want to send an instant
@@ -138,7 +138,7 @@ class getSms extends Controller
          *
          * This feature requires the "Get reply from server" checked on SMSsync.
          */
-        send_instant_message($from);
+        self::send_instant_message($from);
         /**
          * Now send a JSON formatted string to SMSsync to
          * acknowledge that the web service received the message
@@ -151,7 +151,6 @@ class getSms extends Controller
         ]);
         //send_response($response);
     }
-
     /**
      * Writes the received responses to a file. This acts as a database.
      */
@@ -162,7 +161,6 @@ class getSms extends Controller
         @fwrite($fh, $message);
         @fclose($fh);
     }
-
     /**
      * Implements the task feature. Sends messages to SMSsync to be sent as
      * SMS to users.
@@ -196,7 +194,6 @@ class getSms extends Controller
             send_response($response);
         }
     }
-
     /**
      * This sends an instant response when the server receive messages(SMSs) from
      * SMSsync. This requires the settings "Get Reply from Server" enabled on
@@ -220,9 +217,8 @@ class getSms extends Controller
                 "secret" => "123456",
                 "messages"=>array_values($reply)]
             ]);
-        send_response($response);
+        self::send_response($response);
     }
-
     function send_response($response)
     {
         // Avoid caching
@@ -231,7 +227,6 @@ class getSms extends Controller
         header("Content-type: application/json; charset=utf-8");
         echo $response;
     }
-
     function get_sent_message_uuids()
     {
         $data = file_get_contents('php://input');
@@ -243,9 +238,7 @@ class getSms extends Controller
         // these messages.
         write_message_to_file($queued_messages."\n\n");
         send_message_uuids_waiting_for_a_delivery_report($queued_messages);
-
     }
-
     /**
      * Sends message UUIDS to SMSsync for their sms delivery status report.
      * When SMSsync send messages from the server as SMS to phone numbers, SMSsync
@@ -261,7 +254,6 @@ class getSms extends Controller
             ]);
         send_response($response);
     }
-
     function send_messages_uuids_for_sms_delivery_report()
     {
         if(isset($_GET['task']) AND $_GET['task'] == 'result'){
@@ -271,9 +263,7 @@ class getSms extends Controller
                 ]);
             send_response($response);
         }
-
     }
-
     /**
      * Get status delivery report on sent messages
      *
@@ -286,12 +276,4 @@ class getSms extends Controller
             write_message_to_file("message ".$message_results."\n\n");
         }
     }
-
-
-
-
-
-
-
-
 }
