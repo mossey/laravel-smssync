@@ -40,9 +40,10 @@ class getSms extends Controller
         /**
          *  Get the phone number that sent the SMS.
          */
-        if (isset($request->from))
+
+        if (isset($this->from))
         {
-            $from = $request->from;
+            $from = $this->from;
         }
         else
         {
@@ -51,9 +52,9 @@ class getSms extends Controller
         /**
          * Get the SMS aka the message sent.
          */
-        if (isset($request->message))
+        if (isset($this->message))
         {
-            $message = $request->message;
+            $message = $this->message;
         }
         else
         {
@@ -63,38 +64,38 @@ class getSms extends Controller
          * Get the secret key set on SMSsync side
          * for matching on the server side.
          */
-        if (isset($request->secret))
+        if (isset($this->secret))
         {
-            $secret = $request->from;
+            $secret = $this->from;
         }
         /**
          * Get the timestamp of the SMS
          */
-        if(isset($request->sent_timestamp))
+        if(isset($this->sent_timestamp))
         {
-            $sent_timestamp = $request->sent_timestamp;
+            $sent_timestamp = $this->sent_timestamp;
         }
         /**
          * Get the phone number of the device SMSsync is
          * installed on.
          */
-        if (isset($request->sent_to))
+        if (isset($this->sent_to))
         {
-            $sent_to = $request->sent_to;
+            $sent_to = $this->sent_to;
         }
         /**
          * Get the unique message id
          */
-        if (isset($request->message_id))
+        if (isset($this->message_id))
         {
-            $message_id = $request->message_id;
+            $message_id = $this->message_id;
         }
         /**
          * Get device ID
          */
-        if (isset($request->device_id))
+        if (isset($this->device_id))
         {
-            $device_id = $request->device_id;
+            $device_id = $this->device_id;
         }
         /**
          * Now we have retrieved the data sent over by SMSsync
